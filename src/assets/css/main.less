@@ -61,10 +61,39 @@ textarea {
 //Bootstrap
 // @import (less) "https://raw.githubusercontent.com/twbs/bootstrap/705ff7f2275ca823f71ca8dfba27a3b68119a2a4/less/bootstrap.less";
 
-body {
-    // .bg-olive;
-}
+.base-margin(20);
 
+.base-margin(@n, @i: 1) when (@i =< 4) {
+
+  .m@{i} {
+    margin: (@n*@i)+0px;
+  }
+  .mx@{i} {
+    margin-left: (@n*@i)+0px;
+    margin-right: (@n*@i)+0px;
+  }
+  .my@{i} {
+    margin-top: (@n*@i)+0px;
+    margin-bottom: (@n*@i)+0px;
+  }
+  .mt@{i} {
+    margin-top: (@n*@i)+0px;
+  }
+  .mb@{i} {
+    margin-bottom: (@n*@i)+0px;
+  }
+  .ml@{i} {
+    margin-left: (@n*@i)+0px;
+  }
+  .mr@{i} {
+    margin-right: (@n*@i)+0px;
+  }
+  .mxn@{i} {
+    margin-right: (@n*@i) * -1px;
+    margin-left: (@n*@i) * -1px;
+  }
+  .base-margin(@n, (@i + 1));
+}
 
 
 

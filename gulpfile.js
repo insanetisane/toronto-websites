@@ -68,10 +68,8 @@ var findTemplate = function(config) {
 
 var siteData = function(files, metalsmith, done) {
     var metadata = metalsmith.metadata();
-    metadata.site = {
-        title: "Metalsmith Boilerplate",
-        url: "localhost:3000"
-    }
+    var site = require('./site.json');
+    metadata.site = site;
     done();
 };
 
