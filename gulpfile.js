@@ -35,6 +35,8 @@ var paths = {
 	build: './build/'
 }
 
+var env = 'dev';
+
 // FUNCTIONS
 // ---------
 
@@ -111,10 +113,9 @@ var siteData = function(files, metalsmith, done) {
 
 gulp.task('build', function(cb) {
 	var metalsmith = Metalsmith(__dirname)
-    // .use(watch())
-    .use(watch({
-        pattern: ['**/*', '../templates/**/*']
-    }))
+    // .use(watch({
+    //     pattern: ['**/*', '../templates/**/*']
+    // }))
 	.use(less({
 	    render: {
 	        paths: [
