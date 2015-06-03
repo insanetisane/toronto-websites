@@ -4,9 +4,9 @@
     <div class="container">
       <nav class="global-nav">
         <ul class="list-unstyled">
-          <li class="menu-item"><a href="/about.html">about</a></li>
-          <li class="menu-item"><a href="#">link</a></li>
-          <li class="menu-item"><a href="#">link</a></li>
+          {% for page in collections.pages %}
+            <li class="mb1 menu-item {% if link == page.link %}active{% endif %}"><a href="/{{page.link}}">{{page.title}}</a></li>
+          {% endfor %}
         </ul>
       </nav>
     </div>
@@ -14,16 +14,19 @@
 
   <main class="global-main">
     <div class="container">
-      <form name="email_form" action="about.html">
-<!--         <input type="hidden" name="_next" value="/?email=sent" />
+      <form netlify class="clearfix" name="email_form" action="about.html">
+        <input type="hidden" name="_next" value="/?email=sent" />
         <input type="hidden" name="_subject" value="New submission!" />
         <input type="hidden" name="_cc" value="dillon@codebrewers.ca" />
         <input type="text" name="_gotcha" style="display:none" />
- -->
-        <input type="text" name="name" placeholder="Name">
-        <input type="email" name="email" placeholder="Email">
-        <input type="submit" value="Send">
+
+        <input class="" type="text" name="name" placeholder="Name">
+        <input class="" type="email" name="email" placeholder="Email">
+        <input class="" type="submit" value="Send">
       </form>
+
+      {{contents |safe}}
+
     </div>
   </main>
 

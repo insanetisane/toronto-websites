@@ -8,6 +8,7 @@ var swig = require('swig');
 var path = require('path');
 
 var Metalsmith = require('metalsmith');
+var watch = require('metalsmith-watch');
 // styles:
 var less = require('metalsmith-less');
 var autoprefixer = require('metalsmith-autoprefixer');
@@ -22,7 +23,7 @@ var each = require('metalsmith-each');
 // scripts:
 var uglify = require('metalsmith-uglify')
 // development:
-var browserSync = require("browser-sync");
+var browserSync = require("browser-sync").create();
 var reload = require('browser-sync').reload;
 
 
@@ -110,15 +111,17 @@ var siteData = function(files, metalsmith, done) {
 
 gulp.task('build', function(cb) {
 	var metalsmith = Metalsmith(__dirname)
+    // .use(watch())
+    .use(watch({
+        pattern: ['**/*', '../templates/**/*']
+    }))
 	.use(less({
 	    render: {
 	        paths: [
 	            paths.src+'/assets/css/',
 	        ],
-	        sourceMap: {
-	        	sourceMap: paths.build+"/assets/css/"
-	        }
-	    }
+	    },
+        useDynamicSourceMap: true
 	}))
     .use(autoprefixer)
     .use(cleanCSS({
@@ -164,26 +167,43 @@ gulp.task('build', function(cb) {
 		if (err) {
 			gutil.log(gutil.colors.black.bgYellow(err)); gutil.beep();
 		}
-		cb(reload())
-
+		cb()
 	});
 });
 
+gulp.task('reload', function() {
+    browserSync.reload();
+});
+
 gulp.task('watch',['browser-sync'], function() {
-  gulp.watch(paths.src + '/**/*', ['build']);
-  gulp.watch(paths.templates + '/**/*', ['build']);
+  gulp.watch(paths.templates + '**/*', ['build']); // Temporoary solution to trigger rebuilds on template changes
+  gulp.watch(paths.build + '**/*', ['reload']);
 });
 
 gulp.task('browser-sync', function() {
-  browserSync({
+  browserSync.init({
     server: {
       baseDir: paths.build
     },
     open: false,
     notify: false,
-	// tunnel: 'dillon',
-	// ghostMode: false
+    ghostMode: false
+    // tunnel: 'dillon',
+    // middleware : function (req, res, next) {
+        // build(next);
+    // }
   });
+    // browserSync({
+    //     server: {
+    //       baseDir: paths.build
+    //     },
+    //     // files: ["src/**/*", "templates/**/*"],
+    //     open: false,
+    //     middleware : function (req, res, next) {
+    //         build(next);
+    //     }
+    // });
+
 });
 
 gulp.task('clean', function (cb) {
