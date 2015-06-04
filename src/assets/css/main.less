@@ -56,17 +56,18 @@ textarea {
    Author's custom styles
    ========================================================================== */
 // BassCss
-@import (less) "http://d2v52k3cl9vedd.cloudfront.net/basscss/5.2.1/basscss.min.css";
+// @import (less) "http://d2v52k3cl9vedd.cloudfront.net/basscss/5.2.1/basscss.min.css";
 
 //Bootstrap
-// @import (less) "https://raw.githubusercontent.com/twbs/bootstrap/705ff7f2275ca823f71ca8dfba27a3b68119a2a4/less/bootstrap.less";
+@import (less) "https://raw.githubusercontent.com/twbs/bootstrap/705ff7f2275ca823f71ca8dfba27a3b68119a2a4/less/bootstrap.less";
 
 // Flexible Grid System
 @import (less) "flexiblegs.min.css";
 
 
-input {
-  .field-light;
+input[type=text] {
+  // .field-light;
+  .form-control;
 }
 
 // .base-margin(20);

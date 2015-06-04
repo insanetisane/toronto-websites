@@ -12,6 +12,13 @@
     </div>
   </header>
 
+  <ul>
+    {% for post in collections.posts %}
+      <li class="mb1 menu-item {% if link == post.link %}active{% endif %}"><a href="/{{post.link}}">{{post.title}}</a></li>
+    {% endfor %}
+  </ul>
+
+
   <main class="global-main">
     <div class="container">
       <form netlify class="clearfix" name="email_form" action="about.html">

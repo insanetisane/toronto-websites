@@ -35,7 +35,7 @@ var paths = {
 	build: './build/'
 }
 
-var env = 'dev';
+var ENV = 'prod';
 
 // FUNCTIONS
 // ---------
@@ -76,35 +76,15 @@ var siteData = function(files, metalsmith, done) {
     done();
 };
 
-// var plugin = function(config) {
-// 	var content = {};
-//     return function(files, metalsmith, done) {
-// 		var metadata = metalsmith.metadata();
-
-// 	    Object.keys(files).forEach(function(file){
-// 			var collectedData = {};
-
-// 			for (var file in files) {
-// 				var data = files[file];
-
-// 				var postType = path.dirname(file).split('content/')[1];
-// 				if (postType) {
-// 			        collectedData[postType] = collectedData[postType] || [];
-// 			        collectedData[postType].push(data);
-// 				}
-
-// 		    };
-
-// 		    metadata.site = collectedData;
-// 		});
-
-//         for (var file in files) {
-//             var _f = files[file];
-// 			_f.site = metadata.site;
-//         }
-//         done();
-//     };
-// };
+function removeRenderless(){
+    return function(files, metalsmith, done){
+        setImmediate(done);
+        Object.keys(files).forEach(function(file){
+            var data = files[file];
+            if (data._render == false) delete files[file];
+        });
+    };
+}
 
 // TASKS
 // -----
@@ -112,10 +92,21 @@ var siteData = function(files, metalsmith, done) {
 // METALSMITH
 
 gulp.task('build', function(cb) {
-	var metalsmith = Metalsmith(__dirname)
-    // .use(watch({
-    //     pattern: ['**/*', '../templates/**/*']
-    // }))
+    var metalsmith = Metalsmith(__dirname);
+
+    if (ENV == 'dev') {
+        metalsmith
+        .use(watch({
+            paths: {
+                '${source}/**/content/**/*': true,
+                '${source}/**/*.js': true,
+                '${source}/**/*.{css,less}': true,
+                'templates/**/*': "/**/content/**/*",
+            }
+        }));
+    }
+
+    metalsmith
 	.use(less({
 	    render: {
 	        paths: [
@@ -141,6 +132,7 @@ gulp.task('build', function(cb) {
     .use(markdown({
         gfm: true
     }))
+    .use(removeRenderless())
     .use(branch('**/content/pages/*.html')
         .use(each(function(file, filename){
             var name = path.basename(filename);
@@ -156,54 +148,33 @@ gulp.task('build', function(cb) {
         }))
     )
     // .use(findTemplate({
- //        pattern: 'posts',
- //        templateName: 'post.hbt'
- //    }))
+    //    pattern: 'posts',
+    //    templateName: 'post.hbt'
+    // }))
 	.use(templates({
 		engine: 'swig',
 		directory: paths.templates
 	}))
     // .use(permalinks())
-	.build(function(err) {
+	.build(function(err, files) {
 		if (err) {
 			gutil.log(gutil.colors.black.bgYellow(err)); gutil.beep();
 		}
-		cb()
+		cb();
 	});
-});
-
-gulp.task('reload', function() {
-    browserSync.reload();
-});
-
-gulp.task('watch',['browser-sync'], function() {
-  gulp.watch(paths.templates + '**/*', ['build']); // Temporoary solution to trigger rebuilds on template changes
-  gulp.watch(paths.build + '**/*', ['reload']);
 });
 
 gulp.task('browser-sync', function() {
   browserSync.init({
+    files: [paths.build],
     server: {
       baseDir: paths.build
     },
     open: false,
     notify: false,
-    ghostMode: false
+    ghostMode: false,
     // tunnel: 'dillon',
-    // middleware : function (req, res, next) {
-        // build(next);
-    // }
   });
-    // browserSync({
-    //     server: {
-    //       baseDir: paths.build
-    //     },
-    //     // files: ["src/**/*", "templates/**/*"],
-    //     open: false,
-    //     middleware : function (req, res, next) {
-    //         build(next);
-    //     }
-    // });
 
 });
 
@@ -213,4 +184,4 @@ gulp.task('clean', function (cb) {
     ], cb);
 });
 
-gulp.task('default', ['build', 'watch']);
+gulp.task('default', ['build', 'browser-sync']);
