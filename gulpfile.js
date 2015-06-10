@@ -4,7 +4,6 @@
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var del = require('del');
-var swig = require('swig');
 var path = require('path');
 
 var Metalsmith = require('metalsmith');
@@ -15,17 +14,16 @@ var autoprefixer = require('metalsmith-autoprefixer');
 var cleanCSS = require('metalsmith-clean-css');
 // templates:
 var templates = require('metalsmith-templates');
+var swig = require('swig');
 var markdown = require('metalsmith-markdown');
 var collections = require('metalsmith-collections');
 var branch = require('metalsmith-branch');
 var permalinks = require('metalsmith-permalinks');
 var each = require('metalsmith-each');
 // scripts:
-var uglify = require('metalsmith-uglify')
+var uglify = require('metalsmith-uglify');
 // development:
 var browserSync = require("browser-sync").create();
-var reload = require('browser-sync').reload;
-
 
 // VARIABLES
 // ---------
@@ -35,7 +33,8 @@ var paths = {
 	build: './build/'
 }
 
-var ENV = 'prod';
+// var ENV = 'prod';
+var ENV = 'dev';
 
 // FUNCTIONS
 // ---------
@@ -101,7 +100,7 @@ gulp.task('build', function(cb) {
                 '${source}/**/content/**/*': true,
                 '${source}/**/*.js': true,
                 '${source}/**/*.{css,less}': true,
-                'templates/**/*': "/**/content/**/*",
+                'templates/**/*': "**/content/**/*",
             }
         }));
     }
@@ -167,6 +166,9 @@ gulp.task('build', function(cb) {
 gulp.task('browser-sync', function() {
   browserSync.init({
     files: [paths.build],
+    watchOptions: {
+        ignored: ['**/*.less', '**/*.map']
+    },
     server: {
       baseDir: paths.build
     },
@@ -176,12 +178,6 @@ gulp.task('browser-sync', function() {
     // tunnel: 'dillon',
   });
 
-});
-
-gulp.task('clean', function (cb) {
-  return del([
-      build
-    ], cb);
 });
 
 gulp.task('default', ['build', 'browser-sync']);
