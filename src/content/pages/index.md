@@ -1,5 +1,5 @@
 ---
 title: Home Page
-template: template-home.html
+template: home.jade
 partialData: test
 ---

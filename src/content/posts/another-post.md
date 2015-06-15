@@ -1,6 +1,6 @@
 ---
 title: Another Post
-template: template-home.html
+template: home.jade
 ---
 
 # Test???

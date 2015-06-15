@@ -1,4 +1,6 @@
 ---
-title: About Us?????
-template: template-home.html
+title: About Us
+template: home.jade
 ---
+
+# test

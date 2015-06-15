@@ -1,0 +1,72 @@
+include _header
+
+header.global-header.m1
+  nav(role="navigation").navbar.navbar-default.global-nav
+    .navbar-header
+      button(type="button", data-toggle="collapse", data-target=".navbar-ex1-collapse").navbar-toggle.collapsed
+        span.sr-only Toggle navigation
+        span.icon-bar
+        span.icon-bar
+        span.icon-bar
+      a(href="#" ).navbar-brand Metalsmith Template
+    .collapse.navbar-collapse.navbar-ex1-collapse
+      ul.nav.navbar-nav
+        each page in collections.pages
+          li.menu-item(class={active: link == page.link})
+            a(href=page.link) #{page.title}
+
+.jumbotron
+  .container
+    h1 Hello, world!
+    p Contents ...
+    a(href="#").btn.btn-primary.btn-large Learn more
+
+.container
+  .row
+    .col-sm-4
+      .panel.panel-default
+        .panel-heading Heading
+        .panel-body
+          | Basic panel example
+        .panel-footer footer
+    .col-sm-4
+      .panel.panel-default
+        .panel-heading Heading
+        .panel-body
+          | Basic panel example
+        .panel-footer footer
+    .col-sm-4
+      .panel.panel-default
+        .panel-heading Heading
+        .panel-body
+          | Basic panel example
+        .panel-footer footer
+
+.container
+  ul.nav.nav-justified
+    each post in collections.posts
+      li.mb1.menu-item(class={active: link == post.link})
+        a(href=post.link) #{post.title}
+
+  main.global-main
+    form.clearfix.form(netlify, name="email_form", action="about.html")
+      input(type="hidden", name="_next", value="/?email=sent")
+      input(type="hidden", name="_subject", value="New submission!")
+      input(type="hidden", name="_cc", value="dillon@codebrewers.ca")
+      input(type="text", name="_gotcha", style="display:none")
+
+      .form-group
+        label Name
+        input.form-control(type="text", name="name" placeholder="Name")
+
+      .form-group
+        label Email
+
+        input.form-control(type="email", name="email" placeholder="Email")
+      input.btn.btn-danger(type="submit" value="Send")
+
+    .content !{contents}
+
+    include _partial
+
+include _footer

@@ -15,6 +15,7 @@ var cleanCSS = require('metalsmith-clean-css');
 // templates:
 var templates = require('metalsmith-templates');
 var swig = require('swig');
+var jade = require('jade');
 var markdown = require('metalsmith-markdown');
 var collections = require('metalsmith-collections');
 var branch = require('metalsmith-branch');
@@ -39,11 +40,11 @@ var ENV = 'dev';
 // FUNCTIONS
 // ---------
 
-function handleError(error){
-  console.log(error.toString());
-  this.emit('end');
-  gutil.beep();
-}
+// function handleError(error){
+//   console.log(error.toString());
+//   this.emit('end');
+//   gutil.beep();
+// }
 
 swig.setDefaults({
 	cache: false,
@@ -97,7 +98,7 @@ gulp.task('build', function(cb) {
         metalsmith
         .use(watch({
             paths: {
-                '${source}/**/content/**/*': true,
+                '${source}/**/content/**/*': "**/content/**/*",
                 '${source}/**/*.js': true,
                 '${source}/**/*.{css,less}': true,
                 'templates/**/*': "**/content/**/*",
@@ -122,20 +123,23 @@ gulp.task('build', function(cb) {
     .use(siteData)
 	.use(collections({
 		pages: {
-			pattern: 'content/pages/*.md'
+			pattern: 'content/pages/**/*.md'
 		},
 		posts: {
-			pattern: 'content/posts/*.md'
+			pattern: 'content/posts/**/*.md'
 		}
 	}))
     .use(markdown({
         gfm: true
     }))
     .use(removeRenderless())
-    .use(branch('**/content/pages/*.html')
+    .use(branch('**/content/pages/**/*.html')
         .use(each(function(file, filename){
             var name = path.basename(filename);
-            file.link = name;
+            var filePath = path.dirname(filename).split('content/pages/')[1];
+            console.log(name);
+            console.log(filePath);
+            file.link = filePath ? filePath +'/'+ name : name;
             return file.link;
         }))
     )
@@ -151,7 +155,7 @@ gulp.task('build', function(cb) {
     //    templateName: 'post.hbt'
     // }))
 	.use(templates({
-		engine: 'swig',
+		engine: 'jade',
 		directory: paths.templates
 	}))
     // .use(permalinks())
