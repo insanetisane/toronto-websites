@@ -1,6 +1,12 @@
 ---
 title: About Us
-template: home.jade
 ---
 
 # test
+
+*hello?*
+*italics*
+- test
+- another
+
+this is a test

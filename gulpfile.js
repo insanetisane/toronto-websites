@@ -137,17 +137,29 @@ gulp.task('build', function(cb) {
         .use(each(function(file, filename){
             var name = path.basename(filename);
             var filePath = path.dirname(filename).split('content/pages/')[1];
-            console.log(name);
-            console.log(filePath);
-            file.link = filePath ? filePath +'/'+ name : name;
-            return file.link;
+            // save path as new name
+            newName = filePath ? filePath +'/'+ name : name;
+            // prepend slash to use as slug/link of file
+            file.link = '/' + newName
+            // if no template set use index.jade
+            if (!file.template || file.template == undefined) {
+                file.template = 'index.jade';
+            }
+            return newName;
         }))
     )
     .use( branch('**/content/**/*.html')
         .use(each(function(file, filename){
             var postType = path.dirname(filename).split('content/')[1];
-            file.link = postType + "/" + path.basename(filename) || filename;
-            return file.link;
+            // save path as new name
+            newName = postType + "/" + path.basename(filename) || filename;
+            // prepend slash to use as slug/link of file
+            file.link = '/' + newName
+            // if no template set use index.jade
+            if (!file.template || file.template == undefined) {
+                file.template = 'index.jade';
+            }
+            return newName;
         }))
     )
     // .use(findTemplate({

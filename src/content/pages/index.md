@@ -1,5 +1,5 @@
 ---
 title: Home Page
-template: home.jade
+template: index.jade
 partialData: test
 ---

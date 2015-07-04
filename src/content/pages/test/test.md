@@ -1,5 +1,5 @@
 ---
 title: this is a test
-template: home.jade
+template: index.jade
 ---
 # Test page
