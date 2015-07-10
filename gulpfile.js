@@ -34,7 +34,8 @@ var paths = {
 }
 
 // var ENV = 'prod';
-var ENV = 'dev';
+var ENV = process.env.NODE_ENV;
+console.log(ENV);
 
 // FUNCTIONS
 // ---------
@@ -80,7 +81,7 @@ var findTemplate = function(config) {
 gulp.task('build', function(cb) {
     var metalsmith = Metalsmith(__dirname);
 
-    if (ENV == 'dev') {
+    if (ENV !== 'prod') {
         metalsmith
         .use(watch({
             paths: {
