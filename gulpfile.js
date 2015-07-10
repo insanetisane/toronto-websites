@@ -14,7 +14,6 @@ var autoprefixer = require('metalsmith-autoprefixer');
 var cleanCSS = require('metalsmith-clean-css');
 // templates:
 var templates = require('metalsmith-templates');
-var swig = require('swig');
 var jade = require('jade');
 var markdown = require('metalsmith-markdown');
 var collections = require('metalsmith-collections');
@@ -40,18 +39,12 @@ var ENV = 'dev';
 // FUNCTIONS
 // ---------
 
-// function handleError(error){
-//   console.log(error.toString());
-//   this.emit('end');
-//   gutil.beep();
-// }
-
-swig.setDefaults({
-	cache: false,
-	locals: {
-		siteTitle: "metalsmith boil"
-	}
-});
+var siteData = function(files, metalsmith, done) {
+    var metadata = metalsmith.metadata();
+    var site = require('./site.json');
+    metadata.site = site;
+    done();
+};
 
 var findTemplate = function(config) {
     var pattern = new RegExp(config.pattern);
@@ -67,13 +60,6 @@ var findTemplate = function(config) {
         }
         done();
     };
-};
-
-var siteData = function(files, metalsmith, done) {
-    var metadata = metalsmith.metadata();
-    var site = require('./site.json');
-    metadata.site = site;
-    done();
 };
 
 function removeRenderless(){
@@ -100,7 +86,7 @@ gulp.task('build', function(cb) {
             paths: {
                 '${source}/**/content/**/*': "**/content/**/*",
                 '${source}/**/*.js': true,
-                '${source}/**/*.{css,less}': true,
+                '${source}/**/*.{css,less,sass,scss}': true,
                 'templates/**/*': "**/content/**/*",
             }
         }));
@@ -116,9 +102,9 @@ gulp.task('build', function(cb) {
         useDynamicSourceMap: true
 	}))
     .use(autoprefixer)
-    .use(cleanCSS({
-        files: '**/*.css'
-    }))
+    // .use(cleanCSS({
+    //     files: '**/*.css'
+    // }))
     .use(uglify())
     .use(siteData)
 	.use(collections({
@@ -133,26 +119,18 @@ gulp.task('build', function(cb) {
         gfm: true
     }))
     .use(removeRenderless())
-    .use(branch('**/content/pages/**/*.html')
-        .use(each(function(file, filename){
-            var name = path.basename(filename);
-            var filePath = path.dirname(filename).split('content/pages/')[1];
-            // save path as new name
-            newName = filePath ? filePath +'/'+ name : name;
-            // prepend slash to use as slug/link of file
-            file.link = '/' + newName
-            // if no template set use index.jade
-            if (!file.template || file.template == undefined) {
-                file.template = 'index.jade';
-            }
-            return newName;
-        }))
-    )
     .use( branch('**/content/**/*.html')
         .use(each(function(file, filename){
-            var postType = path.dirname(filename).split('content/')[1];
+            var name = path.basename(filename);
+            var filePath = path.dirname(filename);
+
+            if (filename.indexOf('pages') !== -1) {
+                filePath = filePath.split('content/pages/')[1];
+            } else {
+                filePath = filePath.split('content/')[1];
+            }
             // save path as new name
-            newName = postType + "/" + path.basename(filename) || filename;
+            newName = filePath ? filePath +'/'+ name : name;
             // prepend slash to use as slug/link of file
             file.link = '/' + newName
             // if no template set use index.jade
@@ -170,7 +148,6 @@ gulp.task('build', function(cb) {
 		engine: 'jade',
 		directory: paths.templates
 	}))
-    // .use(permalinks())
 	.build(function(err, files) {
 		if (err) {
 			gutil.log(gutil.colors.black.bgYellow(err)); gutil.beep();
