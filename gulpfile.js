@@ -46,6 +46,16 @@ var siteData = function(files, metalsmith, done) {
     done();
 };
 
+function removeRenderless(){
+    return function(files, metalsmith, done){
+        setImmediate(done);
+        Object.keys(files).forEach(function(file){
+            var data = files[file];
+            if (data._render == false) delete files[file];
+        });
+    };
+}
+
 var findTemplate = function(config) {
     var pattern = new RegExp(config.pattern);
 
@@ -61,16 +71,6 @@ var findTemplate = function(config) {
         done();
     };
 };
-
-function removeRenderless(){
-    return function(files, metalsmith, done){
-        setImmediate(done);
-        Object.keys(files).forEach(function(file){
-            var data = files[file];
-            if (data._render == false) delete files[file];
-        });
-    };
-}
 
 // TASKS
 // -----
