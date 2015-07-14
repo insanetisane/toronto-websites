@@ -33,9 +33,10 @@ var paths = {
 	build: './build/'
 }
 
-// var ENV = 'prod';
 var ENV = process.env.NODE_ENV;
 console.log(ENV);
+// Production build command: env NODE_ENV=prod gulp build
+
 
 // FUNCTIONS
 // ---------
