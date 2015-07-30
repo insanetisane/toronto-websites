@@ -9,7 +9,8 @@ var path = require('path');
 var Metalsmith = require('metalsmith');
 var watch = require('metalsmith-watch');
 // styles:
-var less = require('metalsmith-less');
+// var less = require('metalsmith-less');
+var sass = require('metalsmith-sass');
 var autoprefixer = require('metalsmith-autoprefixer');
 var cleanCSS = require('metalsmith-clean-css');
 // templates:
@@ -95,14 +96,18 @@ gulp.task('build', function(cb) {
     }
 
     metalsmith
-	.use(less({
-	    render: {
-	        paths: [
-	            paths.src+'/assets/css/',
-	        ],
-	    },
-        useDynamicSourceMap: true
-	}))
+	// .use(less({
+	//     render: {
+	//         paths: [
+	//             paths.src+'/assets/css/',
+	//         ],
+	//     },
+ //        useDynamicSourceMap: true
+	// }))
+    .use(sass({
+        sourceMap: true,
+        sourceMapContents: true
+    }))
     .use(autoprefixer)
     // .use(cleanCSS({
     //     files: '**/*.css'
